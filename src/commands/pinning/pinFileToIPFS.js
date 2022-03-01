@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { baseUrl } from './../../constants';
 import NodeFormData from 'form-data';
-import stream from 'stream';
 import {validateApiKeys, validateMetadata, validatePinataOptions} from '../../util/validators';
 import { handleError } from '../../util/errorResponse';
 
@@ -9,24 +8,20 @@ import { handleError } from '../../util/errorResponse';
  * Pin File to IPFS
  * @param {string} pinataApiKey
  * @param {string} pinataSecretApiKey
- * @param {*} readStream
+ * @param {*} file
  * @param {*} options
  * @returns {Promise<unknown>}
  */
-export default function pinFileToIPFS(pinataApiKey, pinataSecretApiKey, readStream, options) {
+export default function pinFileToIPFS(pinataApiKey, pinataSecretApiKey, file, options) {
     validateApiKeys(pinataApiKey, pinataSecretApiKey);
 
     return new Promise((resolve, reject) => {
 
         const data = new NodeFormData();
 
-        data.append('file', readStream);
+        data.append('file', file);
 
         const endpoint = `${baseUrl}/pinning/pinFileToIPFS`;
-
-        if (!(readStream instanceof stream.Readable)) {
-            reject(new Error('readStream is not a readable stream'));
-        }
 
         if (options) {
             if (options.pinataMetadata) {
